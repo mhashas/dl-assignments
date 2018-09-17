@@ -1,0 +1,4 @@
+cifar10/*
+!cifar10/get_cifar10.sh
+__pycache__/*
+../../.idea/*
