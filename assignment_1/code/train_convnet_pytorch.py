@@ -14,6 +14,7 @@ import cifar10_utils
 
 import pickle
 import torch
+from constants import *
 from torch import nn
 from torch import functional as F
 from torch.autograd import Variable
@@ -109,7 +110,7 @@ def train():
       x, y = cifar10['train'].next_batch(FLAGS.batch_size)
 
   # save model
-  torch.save(net, 'ConvNet.pt')
+  torch.save(net, MODEL_DIRECTORY + CNN_PYTORCH_FILE)
   test_accuracy = test(net)
   print('Test accuracy %.3f' % (test_accuracy))
 
@@ -119,7 +120,7 @@ def test(net = None):
     cifar10 = cifar10_utils.get_cifar10('cifar10/cifar-10-batches-py')
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-    net = net if net else torch.load('ConvNet.pt').to(device)
+    net = net if net else torch.load(MODEL_DIRECTORY + CNN_PYTORCH_FILE).to(device)
 
     x, y = cifar10['test'].next_batch(FLAGS.test_batch_size)
     accuracy_list = []
@@ -156,7 +157,8 @@ def main():
 
   # Run the training operation
   if FLAGS.evaluate:
-    test()
+    accuracy = test()
+    print('Test accuracy %.3f' % (accuracy))
   else:
     train()
 
@@ -175,7 +177,7 @@ if __name__ == '__main__':
                         help='Frequency of evaluation on the test set')
   parser.add_argument('--data_dir', type = str, default = DATA_DIR_DEFAULT,
                       help='Directory for storing input data')
-  parser.add_argument('--evaluate', type=int, default=0,
+  parser.add_argument('--evaluate', type=int, default=1,
                       help='If we should train or evaluate')
   FLAGS, unparsed = parser.parse_known_args()
 

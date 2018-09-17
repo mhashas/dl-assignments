@@ -14,6 +14,7 @@ import cifar10_utils
 import torch
 from torch import nn
 from torch.autograd import Variable
+from constants import *
 
 
 # Default constants
@@ -111,15 +112,15 @@ def train():
       x = x.reshape(np.size(x, 0 ), -1)
 
   # save model
-  torch.save(net, 'MLP_pytorch.pt')
+  torch.save(net, MODEL_DIRECTORY + MLP_PYTORCH_FILE)
 
-def test():
+def test(net):
   np.random.seed(42)
 
   cifar10 = cifar10_utils.get_cifar10('cifar10/cifar-10-batches-py')
   device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-  net = torch.load('MLP_pytorch.pt').to(device)
+  net = net if net else torch.load(MODEL_DIRECTORY + MLP_PYTORCH_FILE).to(device)
   x = cifar10['test'].images
   y = cifar10['test'].labels
 
