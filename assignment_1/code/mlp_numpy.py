@@ -28,18 +28,17 @@ class MLP(object):
       n_classes: number of classes of the classification problem.
                  This number is required in order to specify the
                  output dimensions of the MLP
-    
-    TODO:
-    Implement initialization of the network.
     """
 
-    ########################
-    # PUT YOUR CODE HERE  #
-    #######################
-    raise NotImplementedError
-    ########################
-    # END OF YOUR CODE    #
-    #######################
+    self.layers = []
+    for nodes in n_hidden:
+      self.layers.append(LinearModule(n_inputs, nodes))
+      n_inputs = nodes
+
+    self.lastlayer = LinearModule(n_inputs, n_classes)
+
+    self.reLU = ReLUModule()
+    self.softMax = SoftMaxModule()
 
   def forward(self, x):
     """
@@ -50,18 +49,15 @@ class MLP(object):
       x: input to the network
     Returns:
       out: outputs of the network
-    
-    TODO:
-    Implement forward pass of the network.
     """
 
-    ########################
-    # PUT YOUR CODE HERE  #
-    #######################
-    raise NotImplementedError
-    ########################
-    # END OF YOUR CODE    #
-    #######################
+    for layer in self.layers:
+      x = layer.forward(x)
+      x = self.reLU.forward(x)
+
+    x = self.lastlayer.forward(x)
+
+    out = self.softMax.forward(x)
 
     return out
 
@@ -71,17 +67,15 @@ class MLP(object):
 
     Args:
       dout: gradients of the loss
-    
-    TODO:
-    Implement backward pass of the network.
     """
-    
-    ########################
-    # PUT YOUR CODE HERE  #
-    #######################
-    raise NotImplementedError
-    ########################
-    # END OF YOUR CODE    #
-    #######################
+
+    dout = self.softMax.backward(dout)
+
+    dout = self.lastlayer.backward(dout)
+
+    rev_layer = self.layers.reverse()
+    for layer in self.layers:
+      dout = self.reLU.backward(dout)
+      dout = layer.backward(dout)
 
     return

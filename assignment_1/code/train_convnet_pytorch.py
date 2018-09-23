@@ -94,11 +94,10 @@ def train():
           current_accuracy = accuracy(numpy_predictions, y)
           current_test_accuracy = test(net)
           current_loss = loss.cpu().data.numpy()
-          #pickle.dump(loss_list, open("losses.p", "wb"))
-          #pickle.dump(accuracy_list, open("accuracies.p", "wb"))
 
           loss_list.append(current_loss)
           accuracy_list.append(current_accuracy)
+          test_eval_list.append(current_test_accuracy)
 
           print ('Training epoch %d out of %d. Loss %.3f, Train accuracy %.3f, Test accuracy %.3f' % (i, FLAGS.max_steps, current_loss, current_accuracy, current_test_accuracy))
 
@@ -177,7 +176,7 @@ if __name__ == '__main__':
                         help='Frequency of evaluation on the test set')
   parser.add_argument('--data_dir', type = str, default = DATA_DIR_DEFAULT,
                       help='Directory for storing input data')
-  parser.add_argument('--evaluate', type=int, default=1,
+  parser.add_argument('--evaluate', type=int, default=0,
                       help='If we should train or evaluate')
   FLAGS, unparsed = parser.parse_known_args()
 

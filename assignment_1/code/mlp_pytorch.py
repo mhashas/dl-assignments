@@ -35,16 +35,30 @@ class MLP(nn.Module):
     super(MLP, self).__init__()
 
     self.layers = nn.ModuleList()
+    self.relu = nn.ReLU()
 
-    for nodes in n_hidden:
-      self.layers.append(nn.Linear(n_inputs, nodes))
-      n_inputs = nodes
-      self.layers.append(nn.ReLU())
+    for i in range(len(n_hidden)):
+      if i == 0:
+        layer = nn.Linear(n_inputs, n_hidden[i])
+      else:
+        layer = nn.Linear(n_hidden[i-1], n_hidden[i])
 
-    self.layers.append(nn.Linear(n_inputs, n_classes))
-    self.layers.append(nn.Softmax(dim = 1))
+      torch.nn.init.xavier_uniform(layer.weight)
+      layer.bias.data.fill_(0.01)
+      #nn.init.normal_(layer.weight, mean = 0, std = 0.0001)
+      self.layers.append(layer)
 
-    print(self.modules)
+      if i < 3:
+        self.layers.append(nn.ReLU(0.2))
+
+
+    self.layers.append(nn.Linear(n_hidden[len(n_hidden) - 1], n_classes))
+    torch.nn.init.xavier_uniform(layer.weight)
+    layer.bias.data.fill_(0.01)
+    self.layers.append(nn.Softmax(dim=1))
+
+    print(self.layers)
+
 
 
   def forward(self, x):
@@ -61,5 +75,6 @@ class MLP(nn.Module):
 
     for layer in self.layers:
       x = layer(x)
+      x = self.relu(x)
 
     return x

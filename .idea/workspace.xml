@@ -2,20 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="093a1810-b6db-4e30-b9f4-548bc80b5080" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/assignment_1/README.md" afterPath="$PROJECT_DIR$/assignment_1/README.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/assignment_1/code/cifar10/get_cifar10.sh" afterPath="$PROJECT_DIR$/assignment_1/code/cifar10/get_cifar10.sh" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/assignment_1/code/cifar10_utils.py" afterPath="$PROJECT_DIR$/assignment_1/code/cifar10_utils.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/assignment_1/code/convnet_pytorch.py" afterPath="$PROJECT_DIR$/assignment_1/code/convnet_pytorch.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/assignment_1/code/custom_batchnorm.py" afterPath="$PROJECT_DIR$/assignment_1/code/custom_batchnorm.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/assignment_1/code/gradient_check.py" afterPath="$PROJECT_DIR$/assignment_1/code/gradient_check.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/assignment_1/code/models/MLP_pytorch.pt" afterPath="$PROJECT_DIR$/assignment_1/code/models/MLP_pytorch.pt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/assignment_1/code/constants.py" afterPath="$PROJECT_DIR$/assignment_1/code/constants.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/assignment_1/code/mlp_numpy.py" afterPath="$PROJECT_DIR$/assignment_1/code/mlp_numpy.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/assignment_1/code/mlp_pytorch.py" afterPath="$PROJECT_DIR$/assignment_1/code/mlp_pytorch.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/assignment_1/code/modules.py" afterPath="$PROJECT_DIR$/assignment_1/code/modules.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/assignment_1/code/train_convnet_pytorch.py" afterPath="$PROJECT_DIR$/assignment_1/code/train_convnet_pytorch.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/assignment_1/code/train_mlp_numpy.py" afterPath="$PROJECT_DIR$/assignment_1/code/train_mlp_numpy.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/assignment_1/code/train_mlp_pytorch.py" afterPath="$PROJECT_DIR$/assignment_1/code/train_mlp_pytorch.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/assignment_1/code/unittests.py" afterPath="$PROJECT_DIR$/assignment_1/code/unittests.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -33,7 +26,7 @@
       <file leaf-file-name="train_convnet_pytorch.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/assignment_1/code/train_convnet_pytorch.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="296">
+            <state relative-caret-position="75">
               <caret line="133" column="27" lean-forward="false" selection-start-line="133" selection-start-column="27" selection-end-line="133" selection-end-column="27" />
               <folding>
                 <element signature="e#150#188#0" expanded="true" />
@@ -45,30 +38,22 @@
       <file leaf-file-name="train_mlp_pytorch.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/assignment_1/code/train_mlp_pytorch.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="66" column="0" lean-forward="true" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="mlp_pytorch.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/assignment_1/code/mlp_pytorch.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="446">
-              <caret line="49" column="23" lean-forward="true" selection-start-line="49" selection-start-column="23" selection-end-line="49" selection-end-column="23" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="unittests.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/assignment_1/code/unittests.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state relative-caret-position="465">
+              <caret line="159" column="1" lean-forward="false" selection-start-line="159" selection-start-column="1" selection-end-line="163" selection-end-column="13" />
               <folding>
-                <element signature="e#0#15#0" expanded="true" />
+                <element signature="e#144#182#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="train_mlp_numpy.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/assignment_1/code/train_mlp_numpy.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="204">
+              <caret line="96" column="48" lean-forward="false" selection-start-line="96" selection-start-column="48" selection-end-line="96" selection-end-column="48" />
+              <folding>
+                <element signature="e#142#180#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -85,14 +70,18 @@
         <option value="$PROJECT_DIR$/assignment_1/code/convnet_pytorch.py" />
         <option value="$PROJECT_DIR$/assignment_1/code/train_convnet_pytorch.py" />
         <option value="$PROJECT_DIR$/assignment_1/code/train_mlp_pytorch.py" />
+        <option value="$PROJECT_DIR$/assignment_1/code/modules.py" />
+        <option value="$PROJECT_DIR$/assignment_1/code/mlp_numpy.py" />
+        <option value="$PROJECT_DIR$/assignment_1/code/constants.py" />
+        <option value="$PROJECT_DIR$/assignment_1/code/train_mlp_numpy.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="65" />
-    <option name="y" value="24" />
-    <option name="width" value="1855" />
-    <option name="height" value="1056" />
+    <option name="x" value="817" />
+    <option name="y" value="52" />
+    <option name="width" value="1097" />
+    <option name="height" value="1028" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -109,7 +98,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -156,13 +144,14 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
       <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
-  <component name="RunManager" selected="Python tests.Unittests in unittests">
+  <component name="RunManager" selected="Python.train_mlp_numpy">
     <configuration default="false" name="train_convnet_pytorch" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -217,6 +206,23 @@
       <option name="PUREUNITTEST" value="true" />
       <option name="PARAMS" value="" />
       <option name="USE_PARAM" value="false" />
+      <method />
+    </configuration>
+    <configuration default="false" name="train_mlp_numpy" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/assignment_1/code" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="DeepLearningAssignments" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/assignment_1/code/train_mlp_numpy.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
       <method />
     </configuration>
     <configuration default="true" type="BashConfigurationType" factoryName="Bash">
@@ -364,16 +370,18 @@
       <option name="USE_KEYWORD" value="false" />
       <method />
     </configuration>
-    <list size="3">
+    <list size="4">
       <item index="0" class="java.lang.String" itemvalue="Python.train_convnet_pytorch" />
       <item index="1" class="java.lang.String" itemvalue="Python.train_mlp_pytorch" />
       <item index="2" class="java.lang.String" itemvalue="Python tests.Unittests in unittests" />
+      <item index="3" class="java.lang.String" itemvalue="Python.train_mlp_numpy" />
     </list>
     <recent_temporary>
-      <list size="3">
-        <item index="0" class="java.lang.String" itemvalue="Python tests.Unittests in unittests" />
-        <item index="1" class="java.lang.String" itemvalue="Python.train_mlp_pytorch" />
-        <item index="2" class="java.lang.String" itemvalue="Python.train_convnet_pytorch" />
+      <list size="4">
+        <item index="0" class="java.lang.String" itemvalue="Python.train_mlp_numpy" />
+        <item index="1" class="java.lang.String" itemvalue="Python tests.Unittests in unittests" />
+        <item index="2" class="java.lang.String" itemvalue="Python.train_mlp_pytorch" />
+        <item index="3" class="java.lang.String" itemvalue="Python.train_convnet_pytorch" />
       </list>
     </recent_temporary>
   </component>
@@ -394,21 +402,42 @@
     <history-entry file="Unittests_in_unittests - 2018.09.16 at 23h 26m 41s.xml">
       <configuration name="Unittests in unittests" configurationId="tests" />
     </history-entry>
+    <history-entry file="Unittests_in_unittests - 2018.09.18 at 11h 10m 24s.xml">
+      <configuration name="Unittests in unittests" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_in_unittests - 2018.09.18 at 11h 10m 54s.xml">
+      <configuration name="Unittests in unittests" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_in_unittests - 2018.09.18 at 11h 11m 24s.xml">
+      <configuration name="Unittests in unittests" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_in_unittests - 2018.09.18 at 11h 12m 55s.xml">
+      <configuration name="Unittests in unittests" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_in_unittests - 2018.09.18 at 11h 13m 19s.xml">
+      <configuration name="Unittests in unittests" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_in_unittests - 2018.09.18 at 11h 13m 29s.xml">
+      <configuration name="Unittests in unittests" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_in_unittests - 2018.09.18 at 11h 18m 45s.xml">
+      <configuration name="Unittests in unittests" configurationId="tests" />
+    </history-entry>
   </component>
   <component name="ToolWindowManager">
-    <frame x="65" y="24" width="1855" height="1056" extended-state="7" />
+    <frame x="817" y="52" width="1097" height="1028" extended-state="4" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16048035" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.26070765" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.29958245" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29784948" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.36238533" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3623656" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -429,12 +458,55 @@
           <line>91</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/assignment_1/code/train_mlp_numpy.py</url>
+          <line>93</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
       </breakpoints>
-      <option name="time" value="5" />
+      <option name="time" value="7" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/assignment_1/code/train_convnet_pytorch.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1995">
+          <caret line="133" column="27" lean-forward="false" selection-start-line="133" selection-start-column="27" selection-end-line="133" selection-end-column="27" />
+          <folding>
+            <element signature="e#150#188#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/assignment_1/code/train_mlp_pytorch.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="810">
+          <caret line="66" column="0" lean-forward="true" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
+          <folding>
+            <element signature="e#144#182#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/assignment_1/code/mlp_pytorch.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/assignment_1/code/unittests.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/assignment_1/code/train_convnet_pytorch.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -459,13 +531,6 @@
           <folding>
             <element signature="e#150#188#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/assignment_1/code/train_mlp_numpy.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-375">
-          <caret line="20" column="14" lean-forward="false" selection-start-line="20" selection-start-column="14" selection-end-line="20" selection-end-column="14" />
         </state>
       </provider>
     </entry>
@@ -497,18 +562,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/assignment_1/code/modules.py">
+    <entry file="file://$PROJECT_DIR$/assignment_1/code/custom_batchnorm.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="158" column="0" lean-forward="false" selection-start-line="158" selection-start-column="0" selection-end-line="158" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/assignment_1/code/unittests.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="342">
+          <caret line="126" column="6" lean-forward="false" selection-start-line="126" selection-start-column="6" selection-end-line="126" selection-end-column="6" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
@@ -517,7 +584,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/assignment_1/code/train_convnet_pytorch.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="296">
+        <state relative-caret-position="75">
           <caret line="133" column="27" lean-forward="false" selection-start-line="133" selection-start-column="27" selection-end-line="133" selection-end-column="27" />
           <folding>
             <element signature="e#150#188#0" expanded="true" />
@@ -525,19 +592,57 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/assignment_1/code/train_mlp_pytorch.py">
+    <entry file="file://$PROJECT_DIR$/assignment_1/code/mlp_numpy.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="66" column="0" lean-forward="true" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="345">
+          <caret line="50" column="33" lean-forward="false" selection-start-line="50" selection-start-column="33" selection-end-line="50" selection-end-column="33" />
+          <folding>
+            <element signature="e#121#159#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/assignment_1/code/mlp_pytorch.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="446">
-          <caret line="49" column="23" lean-forward="true" selection-start-line="49" selection-start-column="23" selection-end-line="49" selection-end-column="23" />
+        <state relative-caret-position="615">
+          <caret line="49" column="23" lean-forward="false" selection-start-line="49" selection-start-column="23" selection-end-line="49" selection-end-column="23" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/assignment_1/code/constants.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="3" column="35" lean-forward="false" selection-start-line="3" selection-start-column="35" selection-end-line="3" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/assignment_1/code/train_mlp_pytorch.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="465">
+          <caret line="159" column="1" lean-forward="false" selection-start-line="159" selection-start-column="1" selection-end-line="163" selection-end-column="13" />
+          <folding>
+            <element signature="e#144#182#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/assignment_1/code/modules.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="157" column="0" lean-forward="false" selection-start-line="157" selection-start-column="0" selection-end-line="157" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/assignment_1/code/train_mlp_numpy.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="96" column="48" lean-forward="false" selection-start-line="96" selection-start-column="48" selection-end-line="96" selection-end-column="48" />
+          <folding>
+            <element signature="e#142#180#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

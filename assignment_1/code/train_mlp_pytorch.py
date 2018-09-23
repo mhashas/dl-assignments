@@ -18,11 +18,11 @@ from constants import *
 
 
 # Default constants
-DNN_HIDDEN_UNITS_DEFAULT = '100'
-LEARNING_RATE_DEFAULT = 2e-3
-MAX_STEPS_DEFAULT = 1500
-BATCH_SIZE_DEFAULT = 200
-EVAL_FREQ_DEFAULT = 100
+DNN_HIDDEN_UNITS_DEFAULT = '2000,1000,500,500,200,100,100'
+LEARNING_RATE_DEFAULT = 5e-3
+MAX_STEPS_DEFAULT = 20000
+BATCH_SIZE_DEFAULT = 100
+EVAL_FREQ_DEFAULT = 1000
 
 # Directory in which cifar data is saved
 DATA_DIR_DEFAULT = './cifar10/cifar-10-batches-py'
@@ -86,6 +86,7 @@ def train():
 
   loss_list = []
   accuracy_list = []
+  test_eval_list = []
 
   for i in range(FLAGS.max_steps):
       x = Variable(torch.from_numpy(x), requires_grad = True).to(device)
@@ -98,11 +99,16 @@ def train():
       loss = crossEntropy(predictions, label_index)
 
       if i % FLAGS.eval_freq == 0:
-          print(accuracy(numpy_predictions, y))
-          print(loss)
+          current_accuracy = accuracy(numpy_predictions, y)
+          current_test_accuracy = test(net)
+          current_loss = loss.cpu().data.numpy()
 
-      loss_list.append(loss)
-      accuracy_list.append(accuracy(numpy_predictions, y))
+          loss_list.append(current_loss)
+          accuracy_list.append(current_accuracy)
+          test_eval_list.append(current_test_accuracy)
+
+          print('Training epoch %d out of %d. Loss %.3f, Train accuracy %.3f, Test accuracy %.3f' % (
+          i, FLAGS.max_steps, current_loss, current_accuracy, current_test_accuracy))
 
       optimizer.zero_grad()
       loss.backward()
@@ -114,7 +120,7 @@ def train():
   # save model
   torch.save(net, MODEL_DIRECTORY + MLP_PYTORCH_FILE)
 
-def test(net):
+def test(net = None):
   np.random.seed(42)
 
   cifar10 = cifar10_utils.get_cifar10('cifar10/cifar-10-batches-py')
@@ -130,8 +136,7 @@ def test(net):
   predictions = net(x)
   numpy_predictions = predictions.cpu().data[:].numpy()
 
-  print("The accuracy on the test set is:")
-  print(accuracy(numpy_predictions, y))
+  return accuracy(numpy_predictions, y)
 
 def print_flags():
   """
@@ -153,7 +158,8 @@ def main():
   # Run the training operation
     # Run the training operation
   if FLAGS.evaluate:
-      test()
+      accuracy = test()
+      print('Test accuracy %.3f' % (accuracy))
   else:
       train()
 
@@ -172,7 +178,7 @@ if __name__ == '__main__':
                         help='Frequency of evaluation on the test set')
   parser.add_argument('--data_dir', type = str, default = DATA_DIR_DEFAULT,
                       help='Directory for storing input data')
-  parser.add_argument('--evaluate', type=int, default=1,
+  parser.add_argument('--evaluate', type=int, default=0,
                       help='If we should train or evaluate')
 
   FLAGS, unparsed = parser.parse_known_args()

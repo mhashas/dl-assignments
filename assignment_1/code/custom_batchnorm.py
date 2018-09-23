@@ -34,13 +34,9 @@ class CustomBatchNormAutograd(nn.Module):
     """
     super(CustomBatchNormAutograd, self).__init__()
 
-    ########################
-    # PUT YOUR CODE HERE  #
-    #######################
-    raise NotImplementedError
-    ########################
-    # END OF YOUR CODE    #
-    #######################
+
+    self.gamma = torch.ones(1, n_neurons)
+    self.beta = torch.zeros(1, n_neurons)
 
   def forward(self, input):
     """
@@ -50,22 +46,11 @@ class CustomBatchNormAutograd(nn.Module):
       input: input tensor of shape (n_batch, n_neurons)
     Returns:
       out: batch-normalized tensor
-    
-    TODO:
-      Check for the correctness of the shape of the input tensor.
-      Implement batch normalization forward pass as given in the assignment.
-      For the case that you make use of torch.var be aware that the flag unbiased=False should be set.
     """
 
-    ########################
-    # PUT YOUR CODE HERE  #
-    #######################
-    raise NotImplementedError
-    ########################
-    # END OF YOUR CODE    #
-    #######################
-
-    return out
+    mean = input.mean(dim=0, keepdim=True)
+    std = input.std(dim=0, keepdim=True, unbiased=False)
+    return (input-mean) / std
 
 
 
