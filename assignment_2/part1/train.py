@@ -22,7 +22,6 @@ import argparse
 import time
 from datetime import datetime
 import numpy as np
-
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -32,13 +31,20 @@ from part1.dataset import PalindromeDataset
 from part1.vanilla_rnn import VanillaRNN
 from part1.lstm import LSTM
 
-def get_accuracy(predictions, targets):
-    accuracy = float(torch.sum(predictions.argmax(dim=1) == targets)) / config.batch_size
+MODEL_FOLDER = 'models/'
+
+def get_accuracy(predictions, targets, number_examples):
+    accuracy = float(torch.sum(predictions.argmax(dim=1) == targets)) / number_examples
     return accuracy
 
 def train(config):
 
     assert config.model_type in ('RNN', 'LSTM')
+
+    filename = config.model_type + '_length_input=' + str(config.input_length)
+    print("Training " + config.model_type + " " + str(config.input_length))
+
+    f = open(MODEL_FOLDER + filename, 'w')
 
     # Initialize the device which to run the model on
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -59,7 +65,7 @@ def train(config):
 
     # Setup the loss and optimizer
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.RMSprop(model.parameters(), config.learning_rate)
+    optimizer = optim.Adam(model.parameters())
 
     for step, (batch_inputs, batch_targets) in enumerate(data_loader):
         # Only for time measurement of step through network
@@ -70,8 +76,7 @@ def train(config):
         torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=config.max_norm)
 
         loss = criterion(predictions, batch_targets)
-
-        accuracy = get_accuracy(predictions, batch_targets)
+        accuracy = get_accuracy(predictions, batch_targets, config.batch_size)
 
         optimizer.zero_grad()
         loss.backward()
@@ -81,7 +86,9 @@ def train(config):
         t2 = time.time()
         examples_per_second = config.batch_size/float(t2-t1)
 
-        if step % 10 == 0:
+        if step % 100 == 0:
+            info = "rain Step {:04d}/{:04d}: Accuracy = {:.2f}, Loss = {:.3f}".format(step, config.train_steps, accuracy, loss)
+            f.write(info + '\n')
 
             print("[{}] Train Step {:04d}/{:04d}, Batch Size = {}, Examples/Sec = {:.2f}, "
                   "Accuracy = {:.2f}, Loss = {:.3f}".format(
@@ -95,20 +102,21 @@ def train(config):
             # https://github.com/pytorch/pytorch/pull/9655
             break
 
+    f.close()
     print('Done training.')
 
 
  ################################################################################
  ################################################################################
 
-if __name__ == "__main__":
 
+def input_length_exploration():
     # Parse training configuration
     parser = argparse.ArgumentParser()
 
     # Model params
     parser.add_argument('--model_type', type=str, default="LSTM", help="Model type, should be 'RNN' or 'LSTM'")
-    parser.add_argument('--input_length', type=int, default=14, help='Length of an input sequence')
+    parser.add_argument('--input_length', type=int, default=5, help='Length of an input sequence')
     parser.add_argument('--input_dim', type=int, default=1, help='Dimensionality of input sequence')
     parser.add_argument('--num_classes', type=int, default=10, help='Dimensionality of output sequence')
     parser.add_argument('--num_hidden', type=int, default=128, help='Number of hidden units in the model')
@@ -120,5 +128,11 @@ if __name__ == "__main__":
 
     config = parser.parse_args()
 
-    # Train the model
-    train(config)
+    for model in ["LSTM", "RNN"]:
+        for input_length in [5, 10, 20, 30, 50, 70, 90]:
+            config.model_type = model
+            config.input_length = input_length
+            train(config)
+
+if __name__ == "__main__":
+    input_length_exploration()
