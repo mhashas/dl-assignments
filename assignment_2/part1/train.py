@@ -21,17 +21,18 @@ from __future__ import print_function
 import argparse
 import time
 from datetime import datetime
-import numpy as np
+from extra.laplotter import LossAccPlotter
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
-
+import os
 from part1.dataset import PalindromeDataset
 from part1.vanilla_rnn import VanillaRNN
 from part1.lstm import LSTM
 
 MODEL_FOLDER = 'models/'
+IMAGES_FOLDER = 'images/'
 
 def get_accuracy(predictions, targets, number_examples):
     accuracy = float(torch.sum(predictions.argmax(dim=1) == targets)) / number_examples
@@ -41,10 +42,17 @@ def train(config):
 
     assert config.model_type in ('RNN', 'LSTM')
 
+    if not os.path.isdir(MODEL_FOLDER):
+        os.mkdir(MODEL_FOLDER)
+
+    if not os.path.isdir(IMAGES_FOLDER):
+        os.mkdir(IMAGES_FOLDER)
+
     filename = config.model_type + '_length_input=' + str(config.input_length)
     print("Training " + config.model_type + " " + str(config.input_length))
 
     f = open(MODEL_FOLDER + filename, 'w')
+    plotter = LossAccPlotter(config.model_type + ' input length ' + str(config.input_length), IMAGES_FOLDER + filename + '_optimizer=RMSProp', x_label="Steps", show_regressions=False)
 
     # Initialize the device which to run the model on
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -65,7 +73,8 @@ def train(config):
 
     # Setup the loss and optimizer
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters())
+    #optimizer = optim.Adam(model.parameters())
+    optimizer = optim.RMSprop(model.parameters(), lr=config.learning_rate)
 
     for step, (batch_inputs, batch_targets) in enumerate(data_loader):
         # Only for time measurement of step through network
@@ -87,8 +96,10 @@ def train(config):
         examples_per_second = config.batch_size/float(t2-t1)
 
         if step % 100 == 0:
-            info = "rain Step {:04d}/{:04d}: Accuracy = {:.2f}, Loss = {:.3f}".format(step, config.train_steps, accuracy, loss)
+            info = "Train Step {:04d}/{:04d}: Accuracy = {:.2f}, Loss = {:.3f}".format(step, config.train_steps, accuracy, loss)
             f.write(info + '\n')
+
+            plotter.add_values(step, loss_train=loss.data.numpy(), acc_train=accuracy, redraw=False)
 
             print("[{}] Train Step {:04d}/{:04d}, Batch Size = {}, Examples/Sec = {:.2f}, "
                   "Accuracy = {:.2f}, Loss = {:.3f}".format(
@@ -102,6 +113,7 @@ def train(config):
             # https://github.com/pytorch/pytorch/pull/9655
             break
 
+    plotter.redraw(plot=False)
     f.close()
     print('Done training.')
 
@@ -129,7 +141,7 @@ def input_length_exploration():
     config = parser.parse_args()
 
     for model in ["LSTM", "RNN"]:
-        for input_length in [5, 10, 20, 30, 50, 70, 90]:
+        for input_length in [10, 20, 50, 90]:
             config.model_type = model
             config.input_length = input_length
             train(config)
