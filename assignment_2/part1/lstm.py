@@ -76,7 +76,7 @@ class LSTM(nn.Module):
 
         self.tanh = nn.Tanh()
         self.sigmoid = nn.Sigmoid()
-        self.softmax = nn.Softmax()
+        self.softmax = nn.Softmax(dim=1)
 
 
     def forward(self, x):
@@ -95,4 +95,5 @@ class LSTM(nn.Module):
             h_t = self.tanh(c_t) * o_t
 
         p_t = torch.mm(self.W_ph, h_t) + self.b_p
-        return torch.t(p_t)
+        y_t = self.softmax(p_t)
+        return torch.t(y_t)

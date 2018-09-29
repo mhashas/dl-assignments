@@ -48,11 +48,11 @@ def train(config):
     if not os.path.isdir(IMAGES_FOLDER):
         os.mkdir(IMAGES_FOLDER)
 
-    filename = config.model_type + '_length_input=' + str(config.input_length)
-    print("Training " + config.model_type + " " + str(config.input_length))
+    filename = config.model_type + '_length_input=' + str(config.input_length) + '_optimizer=' + config.optimizer
+    print("Training " + config.model_type + " " + str(config.input_length) + " optimizer " + config.optimizer)
 
     f = open(MODEL_FOLDER + filename, 'w')
-    plotter = LossAccPlotter(config.model_type + ' input length ' + str(config.input_length), IMAGES_FOLDER + filename + '_optimizer=RMSProp', x_label="Steps", show_regressions=False)
+    plotter = LossAccPlotter(config.model_type + ' input length ' + str(config.input_length) + ' optimizer ' + config.optimizer, IMAGES_FOLDER + filename, x_label="Steps", show_regressions=False)
 
     # Initialize the device which to run the model on
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -73,8 +73,11 @@ def train(config):
 
     # Setup the loss and optimizer
     criterion = nn.CrossEntropyLoss()
-    #optimizer = optim.Adam(model.parameters())
-    optimizer = optim.RMSprop(model.parameters(), lr=config.learning_rate)
+
+    if config.optimizer == 'adam':
+        optimizer = optim.Adam(model.parameters())
+    else:
+        optimizer = optim.RMSprop(model.parameters(), lr=config.learning_rate)
 
     for step, (batch_inputs, batch_targets) in enumerate(data_loader):
         # Only for time measurement of step through network
@@ -137,11 +140,13 @@ def input_length_exploration():
     parser.add_argument('--train_steps', type=int, default=10000, help='Number of training steps')
     parser.add_argument('--max_norm', type=float, default=10.0)
     parser.add_argument('--device', type=str, default="cuda:0", help="Training device 'cpu' or 'cuda:0'")
+    parser.add_argument('--optimizer', type=str, default="adam", help="optimizer to use")
+
 
     config = parser.parse_args()
 
-    for model in ["LSTM", "RNN"]:
-        for input_length in [10, 20, 50, 90]:
+    for model in ["LSTM"]:
+        for input_length in [50]:
             config.model_type = model
             config.input_length = input_length
             train(config)
