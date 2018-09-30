@@ -23,6 +23,7 @@ import time
 from datetime import datetime
 from extra.laplotter import LossAccPlotter
 import torch
+import numpy as np
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
@@ -34,8 +35,13 @@ from part1.lstm import LSTM
 MODEL_FOLDER = 'models/'
 IMAGES_FOLDER = 'images/'
 
-def get_accuracy(predictions, targets, number_examples):
-    accuracy = float(torch.sum(predictions.argmax(dim=1) == targets)) / number_examples
+def get_accuracy(predictions, targets):
+    o = torch.max(predictions, 1)[1].cpu().numpy()
+    t = targets.cpu().numpy()
+    compared = np.equal(o, t)
+    correct = np.sum(compared)
+    accuracy = correct / len(compared)
+
     return accuracy
 
 def train(config):
@@ -48,8 +54,8 @@ def train(config):
     if not os.path.isdir(IMAGES_FOLDER):
         os.mkdir(IMAGES_FOLDER)
 
-    filename = config.model_type + '_length_input=' + str(config.input_length) + '_optimizer=' + config.optimizer
-    print("Training " + config.model_type + " " + str(config.input_length) + " optimizer " + config.optimizer)
+    filename = config.model_type + '_length_input=' + str(config.input_length) + '_optimizer=' + config.optimizer + '_lr=' + str(config.learning_rate).replace('.',',')
+    print("Training " + config.model_type + " " + str(config.input_length) + " optimizer " + config.optimizer + ' lr ' + str(config.learning_rate))
 
     f = open(MODEL_FOLDER + filename, 'w')
     plotter = LossAccPlotter(config.model_type + ' input length ' + str(config.input_length) + ' optimizer ' + config.optimizer, IMAGES_FOLDER + filename, x_label="Steps", show_regressions=False)
@@ -75,7 +81,7 @@ def train(config):
     criterion = nn.CrossEntropyLoss()
 
     if config.optimizer == 'adam':
-        optimizer = optim.Adam(model.parameters())
+        optimizer = optim.Adam(model.parameters(), lr=config.learning_rate)
     else:
         optimizer = optim.RMSprop(model.parameters(), lr=config.learning_rate)
 
@@ -88,7 +94,7 @@ def train(config):
         torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=config.max_norm)
 
         loss = criterion(predictions, batch_targets)
-        accuracy = get_accuracy(predictions, batch_targets, config.batch_size)
+        accuracy = get_accuracy(predictions, batch_targets)
 
         optimizer.zero_grad()
         loss.backward()
@@ -116,6 +122,7 @@ def train(config):
             # https://github.com/pytorch/pytorch/pull/9655
             break
 
+    a='a'
     plotter.redraw(plot=False)
     f.close()
     print('Done training.')
@@ -136,7 +143,7 @@ def input_length_exploration():
     parser.add_argument('--num_classes', type=int, default=10, help='Dimensionality of output sequence')
     parser.add_argument('--num_hidden', type=int, default=128, help='Number of hidden units in the model')
     parser.add_argument('--batch_size', type=int, default=128, help='Number of examples to process in a batch')
-    parser.add_argument('--learning_rate', type=float, default=0.001, help='Learning rate')
+    parser.add_argument('--learning_rate', type=float, default=1e-2, help='Learning rate')
     parser.add_argument('--train_steps', type=int, default=10000, help='Number of training steps')
     parser.add_argument('--max_norm', type=float, default=10.0)
     parser.add_argument('--device', type=str, default="cuda:0", help="Training device 'cpu' or 'cuda:0'")
@@ -145,11 +152,13 @@ def input_length_exploration():
 
     config = parser.parse_args()
 
-    for model in ["LSTM"]:
-        for input_length in [50]:
-            config.model_type = model
-            config.input_length = input_length
-            train(config)
+    for model in ["LSTM", "RNN"]:
+        for input_length in [50,70,90]:
+            for learning_rate in [1e-3, 1e-3/2, 1e-2, 1e-2/2, 0.00146]:
+                config.model_type = model
+                config.input_length = input_length
+                config.learning_rate = learning_rate
+                train(config)
 
 if __name__ == "__main__":
     input_length_exploration()
