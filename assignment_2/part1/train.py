@@ -36,12 +36,7 @@ MODEL_FOLDER = 'models/'
 IMAGES_FOLDER = 'images/'
 
 def get_accuracy(predictions, targets):
-    o = torch.max(predictions, 1)[1].cpu().numpy()
-    t = targets.cpu().numpy()
-    compared = np.equal(o, t)
-    correct = np.sum(compared)
-    accuracy = correct / len(compared)
-
+    accuracy = float(torch.sum(predictions.argmax(dim=1) == targets)) / predictions.shape[0]
     return accuracy
 
 def train(config):
@@ -54,7 +49,7 @@ def train(config):
     if not os.path.isdir(IMAGES_FOLDER):
         os.mkdir(IMAGES_FOLDER)
 
-    filename = config.model_type + '_length_input=' + str(config.input_length) + '_optimizer=' + config.optimizer + '_lr=' + str(config.learning_rate).replace('.',',')
+    filename = config.model_type + '_nods' + '_length_input=' + str(config.input_length) + '_optimizer=' + config.optimizer + '_lr=' + str(config.learning_rate).replace('.',',')
     print("Training " + config.model_type + " " + str(config.input_length) + " optimizer " + config.optimizer + ' lr ' + str(config.learning_rate))
 
     f = open(MODEL_FOLDER + filename, 'w')
@@ -80,7 +75,7 @@ def train(config):
     # Setup the loss and optimizer
     criterion = nn.CrossEntropyLoss()
 
-    if config.optimizer == 'adam':
+    if config.optimizer == "adam":
         optimizer = optim.Adam(model.parameters(), lr=config.learning_rate)
     else:
         optimizer = optim.RMSprop(model.parameters(), lr=config.learning_rate)
@@ -95,6 +90,7 @@ def train(config):
 
         loss = criterion(predictions, batch_targets)
         accuracy = get_accuracy(predictions, batch_targets)
+        accuracy_2 = get_accuracy_2(predictions, batch_targets)
 
         optimizer.zero_grad()
         loss.backward()
@@ -122,7 +118,6 @@ def train(config):
             # https://github.com/pytorch/pytorch/pull/9655
             break
 
-    a='a'
     plotter.redraw(plot=False)
     f.close()
     print('Done training.')
@@ -149,15 +144,14 @@ def input_length_exploration():
     parser.add_argument('--device', type=str, default="cuda:0", help="Training device 'cpu' or 'cuda:0'")
     parser.add_argument('--optimizer', type=str, default="adam", help="optimizer to use")
 
-
     config = parser.parse_args()
 
-    for model in ["LSTM", "RNN"]:
-        for input_length in [50,70,90]:
-            for learning_rate in [1e-3, 1e-3/2, 1e-2, 1e-2/2, 0.00146]:
+    for model in ["RNN","LSTM"]:
+        for input_length in [15,20,30]:
+            for optimizer in ["adam", "rmsprop"]:
                 config.model_type = model
                 config.input_length = input_length
-                config.learning_rate = learning_rate
+                config.optimizer = optimizer
                 train(config)
 
 if __name__ == "__main__":
