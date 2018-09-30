@@ -33,7 +33,7 @@ from part1.vanilla_rnn import VanillaRNN
 from part1.lstm import LSTM
 
 MODEL_FOLDER = 'models/'
-IMAGES_FOLDER = 'images/'
+IMAGES_FOLDER = 'images_opt/'
 
 def get_accuracy(predictions, targets):
     accuracy = float(torch.sum(predictions.argmax(dim=1) == targets)) / predictions.shape[0]
@@ -90,7 +90,6 @@ def train(config):
 
         loss = criterion(predictions, batch_targets)
         accuracy = get_accuracy(predictions, batch_targets)
-        accuracy_2 = get_accuracy_2(predictions, batch_targets)
 
         optimizer.zero_grad()
         loss.backward()
