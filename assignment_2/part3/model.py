@@ -22,30 +22,24 @@ import torch
 
 class TextGenerationModel(nn.Module):
 
-    def __init__(self, batch_size, seq_length, vocabulary_size, embedding_size = 300,
+    def __init__(self, batch_size, seq_length, vocabulary_size,
                  lstm_num_hidden=256, lstm_num_layers=2, device='cuda:0'):
 
         super(TextGenerationModel, self).__init__()
-
-        self.seq_length = seq_length
         self.batch_size = batch_size
-        self.lstm_num_hidden = lstm_num_hidden
+        self.seq_length = seq_length
+        self.hidden_dim = lstm_num_hidden
         self.lstm_num_layers = lstm_num_layers
         self.device = device
 
-        self.embedding = nn.Embedding(vocabulary_size, embedding_size)
-        self.lstm = nn.LSTM(input_size=embedding_size, hidden_size=lstm_num_hidden, num_layers=lstm_num_layers, batch_first=True)
-        self.linear = nn.Linear(lstm_num_hidden, vocabulary_size)
+        self.lstm = nn.LSTM(1, self.hidden_dim, num_layers=lstm_num_layers)
+        self.linear = nn.Linear(self.hidden_dim, vocabulary_size)
 
     def forward(self, x, batch_size = None):
-        if not batch_size:
-            batch_size = self.batch_size
+        if batch_size:
+            self.hidden = (torch.zeros(self.lstm_num_layers, batch_size, self.hidden_dim).to(device=self.device),
+                           torch.zeros(self.lstm_num_layers, batch_size, self.hidden_dim).to(device=self.device))
 
-        h_0 = torch.zeros(self.lstm_num_layers, batch_size, self.lstm_num_hidden, device=self.device)
-        c_0 = torch.zeros(self.lstm_num_layers, batch_size, self.lstm_num_hidden, device=self.device)
-
-        x = self.embedding(x)
-        out = self.lstm(x, (h_0, c_0))
-
-        #return self.linear(out.view(-1, out.size(2)))
-        return self.linear(out[:,-1])
+        lstm_out, self.hidden = self.lstm(x, self.hidden)
+        out = self.linear(lstm_out.view(-1, lstm_out.size(2)))
+        return out

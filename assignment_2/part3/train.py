@@ -25,85 +25,72 @@ import argparse
 import numpy as np
 
 import torch
-import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
-from extra.laplotter import LossAccPlotter
-from part3.dataset import TextDataset
-from part3.model import TextGenerationModel
+
+from dataset import TextDataset
+from model import TextGenerationModel
+from extra.laplotter import  LossAccPlotter
 import random
 
 MODEL_FOLDER = 'models/'
 IMAGES_FOLDER = 'images/'
+ASSETS_FOLDER = 'assets/'
+################################################################################
 
-def get_accuracy(predictions, targets):
-    o = torch.max(predictions, 1)[1].cpu().numpy()
-    t = targets.cpu().numpy()
-    compared = np.equal(o, t)
-    correct = np.sum(compared)
-    accuracy = correct / len(compared)
-
-    return accuracy
-
-def generate_sentence(model, dataset, step):
-    # Generate some sentences by sampling from the model
-    random_ix = torch.tensor([dataset.co])
-    ix_list = [random_ix]
+def generate_sentence(model, dataset, config):
+    char_list = [torch.tensor([random.choice(list(dataset._ix_to_char.keys()))])]
 
     for i in range(config.seq_length):
-        tensor = torch.unsqueeze(torch.unsqueeze(ix_list[-1], 0), 0).float().to(device=config.device)
-        out = model(tensor, 1)
-        o = torch.max(out, 1)[1]
-        ix_list.append(o)
-    char_ix = [x.cpu().numpy()[0] for x in ix_list]
-    gen_sen = dataset.convert_to_string(char_ix)
-    with open('generated_sentences.txt', 'a') as file:
-        file.write('{}: {}\n'.format(step, gen_sen))
-    pass
+        tensor = torch.unsqueeze(torch.unsqueeze(char_list[-1], 0), 0).float().to(device=config.device)
+        if i == 0:
+            predictions = model(tensor,1)
+        else:
+            predictions = model(tensor)
+        char_list.append(torch.max(predictions, 1)[1])
+
+    chars = [char.cpu().numpy()[0] for char in char_list]
+    generated_sentence = dataset.convert_to_string(chars)
+
+    return generated_sentence
+
+def get_accuracy(predictions, targets):
+    accuracy = float(torch.sum(predictions.argmax(dim=1) == targets)) / predictions.shape[0]
+    return accuracy
 
 def train(config):
-    if not os.path.isdir(MODEL_FOLDER):
-        os.mkdir(MODEL_FOLDER)
-
-    if not os.path.isdir(IMAGES_FOLDER):
-        os.mkdir(IMAGES_FOLDER)
-
-    filename = config.model_type + '_length_input=' + str(config.input_length) + '_optimizer=' + config.optimizer
-    print("Training " + config.model_type + " " + str(config.input_length) + " optimizer " + config.optimizer)
-    f = open(MODEL_FOLDER + filename, 'w')
 
     # Initialize the device which to run the model on
     device = torch.device(config.device)
-    plotter = LossAccPlotter(config.model_type + ' input length ' + str(config.input_length) + ' optimizer ' + config.optimizer, IMAGES_FOLDER + filename, x_label="Steps", show_regressions=False)
-
 
     # Initialize the dataset and data loader (note the +1)
-    dataset = TextDataset(config.txt_file, config.seq_length)  # fixme
+    dataset = TextDataset(config.txt_file, config.seq_length, config.batch_size, config.train_steps)
     data_loader = DataLoader(dataset, config.batch_size, num_workers=1)
 
     # Initialize the model that we are going to use
-    model = TextGenerationModel(config.batch_size, config.seq_length, dataset.vocab_size, device=device)
+    model = TextGenerationModel(config.batch_size, config.seq_length, dataset.vocab_size).to(device=device)
 
     # Setup the loss and optimizer
-    criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=config.learning_rate)
+    criterion = torch.nn.CrossEntropyLoss()
+    optimizer = optim.Adam(model.parameters(), lr = config.learning_rate)
+
+    generated_sentences = []
 
     for step, (batch_inputs, batch_targets) in enumerate(data_loader):
-
         # Only for time measurement of step through network
         t1 = time.time()
 
-        model.zero_grad()
-
-        inputs = torch.unsqueeze(torch.stack(batch_inputs), 2).float().to(device)
-        targets = torch.cat(batch_targets).to(device)
-
-        predictions = model(inputs.to(device))
-
-        loss = criterion(predictions, targets)
-        accuracy = get_accuracy(predictions, targets)
-
         optimizer.zero_grad()
+
+        batch_inputs = torch.unsqueeze(torch.stack(batch_inputs), 2).float().to(device=device)
+        batch_targets = torch.cat(batch_targets).to(device=device)
+
+        predictions = model(batch_inputs, config.batch_size)
+        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=config.max_norm)
+
+        loss = criterion(predictions, batch_targets)
+        accuracy = get_accuracy(predictions, batch_targets)
+
         loss.backward()
         optimizer.step()
 
@@ -111,42 +98,39 @@ def train(config):
         t2 = time.time()
         examples_per_second = config.batch_size/float(t2-t1)
 
-        if step % config.print_every == 100:
-            info = "Train Step {:04d}/{:04d}: Accuracy = {:.2f}, Loss = {:.3f}".format(step, config.train_steps,
-                                                                                   accuracy, loss)
-            f.write(info + '\n')
-            plotter.add_values(step, loss_train=loss.data.numpy(), acc_train=accuracy, redraw=False)
-
+        if step % config.print_every == 0:
             print("[{}] Train Step {:04d}/{:04d}, Batch Size = {}, Examples/Sec = {:.2f}, "
                   "Accuracy = {:.2f}, Loss = {:.3f}".format(
                     datetime.now().strftime("%Y-%m-%d %H:%M"), step,
-                    config.train_steps, config.batch_size, examples_per_second,
+                    int(config.train_steps), config.batch_size, examples_per_second,
                     accuracy, loss
             ))
 
-        if step == config.sample_every:
-           generate_sentence(model, dataset, step)
+        if step % config.sample_every == 0:
+            # Generate some sentences by sampling from the model
+            sentence = generate_sentence(model, dataset, config)
+            generated_sentences.append(sentence)
 
-        if step == config.train_steps:
-            # If you receive a PyTorch data-loader error, check this bug report:
-            # https://github.com/pytorch/pytorch/pull/9655
-            break
+    filename = config.txt_file.replace('.txt', '') + 'generated_sentences.txt'
+    f = open(filename, 'w')
+    output_string = '\n'.join(generated_sentences)
+    f.write(output_string)
 
-    plotter.redraw(plot=False)
-    f.close()
+
+
     print('Done training.')
 
 
  ################################################################################
  ################################################################################
 
-if __name__ == "__main__":
+def document_exploration():
 
     # Parse training configuration
     parser = argparse.ArgumentParser()
 
     # Model params
-    parser.add_argument('--txt_file', type=str, required=True, help="Path to a .txt file to train on")
+    parser.add_argument('--txt_file', type=str, default='assets/us_constitution.txt',help="Path to a .txt file to train on")
     parser.add_argument('--seq_length', type=int, default=30, help='Length of an input sequence')
     parser.add_argument('--lstm_num_hidden', type=int, default=128, help='Number of hidden units in the LSTM')
     parser.add_argument('--lstm_num_layers', type=int, default=2, help='Number of LSTM layers in the model')
@@ -156,19 +140,29 @@ if __name__ == "__main__":
     parser.add_argument('--learning_rate', type=float, default=2e-3, help='Learning rate')
 
     # It is not necessary to implement the following three params, but it may help training.
-    parser.add_argument('--learning_rate_decay', type=float, default=0.96, help='Learning rate decay fraction')
+    parser.add_argument('--learning_rate_decay', type=float, default=0.97, help='Learning rate decay fraction')
     parser.add_argument('--learning_rate_step', type=int, default=5000, help='Learning rate step')
-    parser.add_argument('--dropout_keep_prob', type=float, default=1.0, help='Dropout keep probability')
+    parser.add_argument('--dropout_keep_prob', type=float, default=0.8, help='Dropout keep probability')
 
-    parser.add_argument('--train_steps', type=int, default=1e6, help='Number of training steps')
+    parser.add_argument('--train_steps', type=int, default=10000  , help='Number of training steps')
     parser.add_argument('--max_norm', type=float, default=5.0, help='--')
 
     # Misc params
     parser.add_argument('--summary_path', type=str, default="./summaries/", help='Output path for summaries')
-    parser.add_argument('--print_every', type=int, default=5, help='How often to print training progress')
+    parser.add_argument('--print_every', type=int, default=100, help='How often to print training progress')
     parser.add_argument('--sample_every', type=int, default=100, help='How often to sample from the model')
+
+    parser.add_argument('--save_every', type=int, default=100, help='How often to sample from the model')
+    parser.add_argument('--device', type=str, default="cuda:0", help="Training device 'cpu' or 'cuda:0'")
 
     config = parser.parse_args()
 
-    # Train the model
-    train(config)
+    for document in ["assets/poems.txt","assets/linux.txt", "assets/shakespeare.txt"]:
+        config.txt_file = document
+
+        # Train the model
+        train(config)
+
+if __name__ == "__main__":
+
+    document_exploration()
