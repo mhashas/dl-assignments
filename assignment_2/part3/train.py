@@ -33,8 +33,7 @@ from model import TextGenerationModel
 from extra.laplotter import  LossAccPlotter
 import random
 
-MODEL_FOLDER = 'models/'
-IMAGES_FOLDER = 'images/'
+CHECKPOINTS_FOLDER ='checkpoints/'
 ASSETS_FOLDER = 'assets/'
 ################################################################################
 
@@ -54,11 +53,17 @@ def generate_sentence(model, dataset, config):
 
     return generated_sentence
 
+def generate_sentence_continue(model):
+    pass
+
 def get_accuracy(predictions, targets):
     accuracy = float(torch.sum(predictions.argmax(dim=1) == targets)) / predictions.shape[0]
     return accuracy
 
 def train(config):
+
+    if not os.path.isdir(CHECKPOINTS_FOLDER):
+        os.mkdir(CHECKPOINTS_FOLDER)
 
     # Initialize the device which to run the model on
     device = torch.device(config.device)
@@ -111,6 +116,12 @@ def train(config):
             sentence = generate_sentence(model, dataset, config)
             generated_sentences.append(sentence)
 
+    state = {
+        'state_dict': model.state_dict(),
+        'optimizer': optimizer.state_dict(),
+    }
+    torch.save(state, 'checkpoints/{}'.format(config.txt_file.split("/",1)[1].replace('.txt','')))
+
     filename = config.txt_file.replace('.txt', '') + 'generated_sentences.txt'
     f = open(filename, 'w')
     output_string = '\n'.join(generated_sentences)
@@ -144,7 +155,7 @@ def document_exploration():
     parser.add_argument('--learning_rate_step', type=int, default=5000, help='Learning rate step')
     parser.add_argument('--dropout_keep_prob', type=float, default=0.8, help='Dropout keep probability')
 
-    parser.add_argument('--train_steps', type=int, default=10000  , help='Number of training steps')
+    parser.add_argument('--train_steps', type=int, default=100000  , help='Number of training steps')
     parser.add_argument('--max_norm', type=float, default=5.0, help='--')
 
     # Misc params
@@ -154,14 +165,17 @@ def document_exploration():
 
     parser.add_argument('--save_every', type=int, default=100, help='How often to sample from the model')
     parser.add_argument('--device', type=str, default="cuda:0", help="Training device 'cpu' or 'cuda:0'")
-
+    parser.add_argument('--evaluate', type=bool, default=False)
     config = parser.parse_args()
 
     for document in ["assets/poems.txt","assets/linux.txt", "assets/shakespeare.txt"]:
         config.txt_file = document
 
-        # Train the model
-        train(config)
+        if config.evaluate:
+            pass
+        else:
+            # Train the model
+            train(config)
 
 if __name__ == "__main__":
 
