@@ -53,8 +53,40 @@ def generate_sentence(model, dataset, config):
 
     return generated_sentence
 
-def generate_sentence_continue(model):
-    pass
+def generate_sentences(config, sentence):
+    state = torch.load('checkpoints/{}'.format(config.txt_file.split("/",1)[1].replace('.txt','')))
+    device = torch.device(config.device)
+
+    # Initialize the dataset and data loader (note the +1)
+    dataset = TextDataset(config.txt_file, config.seq_length, config.batch_size, config.train_steps)
+    data_loader = DataLoader(dataset, config.batch_size, num_workers=1)
+
+    # Initialize the model that we are going to use
+    model = TextGenerationModel(config.batch_size, config.seq_length, dataset.vocab_size).to(device=device)
+
+    model.load_state_dict(state['state_dict'])
+
+    char_list = dataset.convert_to_ix(sentence)
+    return_list = [[torch.tensor(char)] for char in char_list]
+
+    for i in range(len(sentence) + 50):
+        tensor = [torch.tensor([char_list[i]])]
+        tensor = torch.unsqueeze(torch.unsqueeze(tensor[-1], 0), 0).float().to(device=config.device)
+        if i==0:
+            predictions = model(tensor,1)
+        else:
+            predictions = model(tensor)
+
+        out = torch.max(predictions, 1)[1]
+        char_list.append(out)
+        out = out.cpu()
+        return_list.append([out])
+
+    chars = [char[0].cpu().numpy() for char in return_list]
+    generated_sentence = dataset.convert_to_string(chars)
+
+    return generated_sentence
+
 
 def get_accuracy(predictions, targets):
     accuracy = float(torch.sum(predictions.argmax(dim=1) == targets)) / predictions.shape[0]
@@ -165,14 +197,15 @@ def document_exploration():
 
     parser.add_argument('--save_every', type=int, default=100, help='How often to sample from the model')
     parser.add_argument('--device', type=str, default="cuda:0", help="Training device 'cpu' or 'cuda:0'")
-    parser.add_argument('--evaluate', type=bool, default=False)
+    parser.add_argument('--evaluate', type=bool, default=True)
     config = parser.parse_args()
 
     for document in ["assets/poems.txt","assets/linux.txt", "assets/shakespeare.txt"]:
         config.txt_file = document
 
         if config.evaluate:
-            pass
+            sentence = generate_sentences(config, "I like turtles")
+            print(sentence)
         else:
             # Train the model
             train(config)

@@ -47,6 +47,13 @@ class TextDataset(data.Dataset):
     def convert_to_string(self, char_ix):
         return ''.join(self._ix_to_char[ix] for ix in char_ix)
 
+    def convert_to_ix(self, chars):
+        idx = []
+        for ix in chars:
+            idx.append(self._char_to_ix[ix])
+
+        return idx
+
     def __len__(self):
         return int(self.batch_size * self.train_steps)
 
