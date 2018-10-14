@@ -53,8 +53,42 @@ def generate_sentence(model, dataset, config):
 
     return generated_sentence
 
-def generate_sentence_continue(model):
-    pass
+def generate_sentences(config, sentence):
+    state = torch.load('checkpoints/{}'.format(config.txt_file.split("/",1)[1].replace('.txt','')))
+    device = torch.device(config.device)
+
+    # Initialize the dataset and data loader (note the +1)
+    dataset = TextDataset(config.txt_file, config.seq_length, config.batch_size, config.train_steps)
+
+    # Initialize the model that we are going to use
+    model = TextGenerationModel(config.batch_size, config.seq_length, dataset.vocab_size).to(device=device)
+
+    model.load_state_dict(state['state_dict'])
+
+    char_list = dataset.convert_to_ix(sentence)
+    return_list = [[torch.tensor(char)] for char in char_list]
+
+    for i in range(len(sentence) + 50):
+        tensor = [torch.tensor([char_list[i]])]
+        tensor = torch.unsqueeze(torch.unsqueeze(tensor[-1], 0), 0).float().to(device=config.device)
+        if i==0:
+            predictions = model(tensor,1)
+        else:
+            predictions = model(tensor)
+
+        out = torch.max(predictions, 1)[1]
+        char_list.append(out)
+        return_v = int(out.cpu().numpy()[0])
+        return_list.append([torch.tensor(return_v)])
+
+    indices = []
+    for char in return_list:
+        indices.append(int(char[0].numpy()))
+    generated_sentence = dataset.convert_to_string(indices)
+
+    return generated_sentence
+
+
 
 def get_accuracy(predictions, targets):
     accuracy = float(torch.sum(predictions.argmax(dim=1) == targets)) / predictions.shape[0]
@@ -172,7 +206,7 @@ def document_exploration():
         config.txt_file = document
 
         if config.evaluate:
-            pass
+            generate_sentences(config, "Oh dear my love")
         else:
             # Train the model
             train(config)
